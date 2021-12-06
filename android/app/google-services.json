@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "654445971359",
+    "project_id": "collegeproject-157d5",
+    "storage_bucket": "collegeproject-157d5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654445971359:android:da6e95268f44daed47dfaa",
+        "android_client_info": {
+          "package_name": "com.example.college_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "654445971359-lc62qb6vmn64idn56dnp0b4m0k42m7o0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQJJptjknpvGRWx1ImDA_EtKyIrFM4c5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "654445971359-lc62qb6vmn64idn56dnp0b4m0k42m7o0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "654445971359-pfn5610cvqapeoseiv9opg0la3jqvese.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.college.app.collgeProject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654445971359:android:f0ae582c3135f14a47dfaa",
+        "android_client_info": {
+          "package_name": "com.example.college_project_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "654445971359-lc62qb6vmn64idn56dnp0b4m0k42m7o0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQJJptjknpvGRWx1ImDA_EtKyIrFM4c5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "654445971359-lc62qb6vmn64idn56dnp0b4m0k42m7o0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "654445971359-pfn5610cvqapeoseiv9opg0la3jqvese.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.college.app.collgeProject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
