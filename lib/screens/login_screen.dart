@@ -16,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController emailController = new TextEditingController();
+  final TextEditingController pwdresetController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
 
   final _auth = FirebaseAuth.instance;
@@ -136,6 +137,24 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontSize: 15),
                             ),
                           )
+                        ]),
+
+                    SizedBox(height: 15),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: () {
+                              showAlertDialog(context);
+                            },
+                            child: Text(
+                              "Forgot Password",
+                              style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15),
+                            ),
+                          )
                         ])
                   ],
                 ),
@@ -144,6 +163,72 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  showAlertDialog(BuildContext context) {
+    String email = "";
+    // set up the button
+    Widget okButton = TextButton(
+      child: Text("Send Reset Link"),
+      onPressed: () async{
+        try {
+          await FirebaseAuth.instance.sendPasswordResetEmail(email: pwdresetController.text).then((value) =>         Navigator.pop(context));
+
+        } on FirebaseAuthException catch (error) {
+          switch (error.code) {
+            case "user-not-found":
+              errorMessage = "User not found";
+              break;
+            default:
+              errorMessage = "Something went wrong";
+          }
+          Fluttertoast.showToast(msg: errorMessage!);
+          print(error.code);
+        }
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Forgot Password"),
+      content: TextFormField(
+          autofocus: false,
+          controller: pwdresetController,
+          keyboardType: TextInputType.emailAddress,
+          validator: (value) {
+            if (value!.isEmpty) {
+              return ("Please Enter Your Email");
+            }
+            if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                .hasMatch(value!)) {
+              return ("Please Enter a valid email");
+            }
+            return null;
+          },
+          onSaved: (value) {
+            pwdresetController.text = value!;
+          },
+          textInputAction: TextInputAction.next,
+          decoration: InputDecoration(
+            prefixIcon: Icon(Icons.mail),
+            contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+            hintText: "Email",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          )),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 
