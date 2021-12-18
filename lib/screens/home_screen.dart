@@ -21,17 +21,27 @@ class _HomeScreenState extends State<HomeScreen> {
   UserModel loggedInUser = UserModel();
   MessageModel messageModel = MessageModel();
   List<MessageModel> messages = [];
+  List messagesId = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    print(user!.uid);
+    refreshData();
+  }
+
+  refreshData(){
+    setState(() {
+      isLoading = true;
+    });
+    messages.clear();
+    messagesId.clear();
     FirebaseFirestore.instance
         .collection("admins")
         .doc(user!.uid)
         .get()
         .then((value) {
-          print(value.data());
+      print(value.data());
       this.loggedInUser = UserModel.fromMap(value.data());
       setState(() {});
     });
@@ -44,11 +54,15 @@ class _HomeScreenState extends State<HomeScreen> {
       for (int i = 0; i < value.docs.length; i++) {
         messageModel = messageModelFromJson(json.encode(value.docs[i].data()));
         messages.add(messageModel);
+        messagesId.add(value.docs[i].id);
       }
       setState(() {});
     });
-  }
 
+    setState(() {
+      isLoading = false;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
       ),
       body: Center(
-        child: Padding(
+        child: isLoading? CircularProgressIndicator.adaptive() : Padding(
           padding: EdgeInsets.all(20),
           child: ListView.builder(
             itemCount: messages.length,
@@ -67,9 +81,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? Center(
                       child: Text("You don't have any messages"),
                     )
-                  : Container(
-                      child: Text(messages[i].messageData!),
-                    );
+                  : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                          child: Text(messages[i].messageData!),
+                        ),
+                      IconButton(onPressed: ()async{
+                        FirebaseFirestore.instance
+                            .collection('messages')
+                            .doc(messagesId[i])
+                            .delete().then((value) => setState(() {
+                          refreshData();
+                        }));
+                      },icon:Icon(Icons.delete),),
+                    ],
+                  );
             },
           ),
         ),

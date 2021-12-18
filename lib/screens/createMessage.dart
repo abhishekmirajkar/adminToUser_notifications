@@ -34,16 +34,21 @@ class _CreateMessageState extends State<CreateMessage> {
   String? selectedBatch;
   String? selectedDiv;
   String? selectedDept;
+  String? selectedCate;
 
   String? selectedBatchId;
   String? selectedDivId;
   String? selectedDeptId;
+  String? selectedCateId;
+
 
   var batchData=[];
   var deptData=[];
   var divData=[];
+  var cateData=[];
   UserModel loggedInUser = UserModel();
 
+  String date = "";
 
 
   @override
@@ -85,8 +90,16 @@ class _CreateMessageState extends State<CreateMessage> {
           for (int i = 0; i < value.docs.length; i++) {
             deptData.add(value.docs[i].data());
           }
-          setState(() {
-            isLoading =false;
+          FirebaseFirestore.instance
+              .collection('category')
+              .get()
+              .then((value) {
+            for (int i = 0; i < value.docs.length; i++) {
+              cateData.add(value.docs[i].data());
+            }
+            setState(() {
+              isLoading =false;
+            });
           });
         });
 
@@ -144,6 +157,13 @@ class _CreateMessageState extends State<CreateMessage> {
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = new DateTime.now();
+    DateTime datee = new DateTime(now.year, now.month, now.day);
+
+    print(datee.day);
+    print(datee.month);
+    print(datee.year);
+    date = "${datee.day}:${datee.month}:${datee.year}";
     return Scaffold(
       //drawer: drawer(),
       appBar: AppBar(
@@ -202,6 +222,8 @@ class _CreateMessageState extends State<CreateMessage> {
     messageModel.batchId = selectedBatchId;
     messageModel.deptId = selectedDeptId;
     messageModel.divId = selectedDivId;
+    messageModel.cateId= selectedCateId;
+
     await firebaseFirestore
         .collection("messages")
         .doc()
@@ -210,6 +232,9 @@ class _CreateMessageState extends State<CreateMessage> {
       'batchId':selectedBatchId,
       'deptId':selectedDeptId,
       'divId':selectedDivId,
+      'cateId':selectedCateId,
+      'date':date,
+      'admin':"${loggedInUser.firstName} ${loggedInUser.secondName}",
       'messageData':messageEditingController.text
     });
     callOnFcmApiSendPushNotifications(["dJ9L_VakN0oGkUi5kAV00G:APA91bGvemgujZdtd3YnSCCgRUiIRkxQQdp6qF-91Oj46FyWKUx3Yps8q4w1FiKaJySeirttS7c1yT3Ebay4LQ8qaP19FhDnreu9CCpm4EgezfPzXr2hoKkyHEElbFYavJn_7Wepl_kd"]);
@@ -288,6 +313,21 @@ class _CreateMessageState extends State<CreateMessage> {
               setState(() {
                 selectedDivId = value.toString();
                 selectedDiv = value.toString();
+              });
+            }
+        ),
+
+        DropdownButton(
+            hint: Text("Choose Category"),
+            isExpanded: true,
+            value: selectedCate,
+            items: cateData
+                .map((e) => DropdownMenuItem(child: Text(e['cateName']), value: e['cateId'],))
+                .toList(),
+            onChanged: (value) {
+              setState(() {
+                selectedCateId = value.toString();
+                selectedCate = value.toString();
               });
             }
         ),

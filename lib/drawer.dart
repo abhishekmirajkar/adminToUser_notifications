@@ -1,4 +1,5 @@
 import 'package:admin_college_project/screens/login_screen.dart';
+import 'package:admin_college_project/screens/manageCategories.dart';
 import 'package:admin_college_project/screens/manageDept.dart';
 import 'package:admin_college_project/screens/manageDiv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -68,6 +69,16 @@ class _drawerState extends State<drawer> {
                   MaterialPageRoute(builder: (context) => ManageDiv()));
             },
           ),
+
+          ListTile(
+            title: const Text('Modify Category'),
+            onTap: () {
+              Navigator.push(
+                  (context),
+                  MaterialPageRoute(builder: (context) => ManageCategory()));
+            },
+          ),
+
           ListTile(
             title: const Text('Logout'),
             onTap: () {
