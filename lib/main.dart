@@ -18,10 +18,25 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    const MaterialColor kPrimaryColor = const MaterialColor(
+      0xFF12469B,
+      const <int, Color>{
+        50: const Color(0xFF12469B),
+        100: const Color(0xFF12469B),
+        200: const Color(0xFF12469B),
+        300: const Color(0xFF12469B),
+        400: const Color(0xFF12469B),
+        500: const Color(0xFF12469B),
+        600: const Color(0xFF12469B),
+        700: const Color(0xFF12469B),
+        800: const Color(0xFF12469B),
+        900: const Color(0xFF12469B),
+      },
+    );
     return MaterialApp(
-      title: 'Email And Password Login',
+      title: 'Student Connect',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: kPrimaryColor,
       ),
       debugShowCheckedModeBanner: false,
       home: FirebaseAuth.instance.currentUser != null ? HomeScreen () : LoginScreen(),

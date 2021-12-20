@@ -201,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
               return ("Please Enter Your Email");
             }
             if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-                .hasMatch(value!)) {
+                .hasMatch(value)) {
               return ("Please Enter a valid email");
             }
             return null;
