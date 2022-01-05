@@ -167,7 +167,7 @@ class _CreateMessageState extends State<CreateMessage> {
     return Scaffold(
       //drawer: drawer(),
       appBar: AppBar(
-        title: const Text("Welcome"),
+        title: const Text("Student Connect"),
         leading: GestureDetector(
             child: Icon(Icons.arrow_back_ios),
             onTap: () {
@@ -175,33 +175,36 @@ class _CreateMessageState extends State<CreateMessage> {
             }),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          subForm(),
-          TextFormField(
-              keyboardType: TextInputType.multiline,
-              autofocus: false,
-              maxLines: 10,
-              controller: messageEditingController,
-              validator: (value) {
-                if (messageEditingController.text.isEmpty) {
-                  return "Message Can't Be Empty";
-                }
-              },
-              onSaved: (value) {
-                messageEditingController.text = value!;
-              },
-              textInputAction: TextInputAction.done,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.message),
-                contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                hintText: "Message",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              )),
-          submitButton(),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: Column(
+          children: [
+            Text("Create Message",textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 26),),
+            subForm(),
+            TextFormField(
+                keyboardType: TextInputType.multiline,
+                autofocus: false,
+                maxLines: 10,
+                controller: messageEditingController,
+                validator: (value) {
+                  if (messageEditingController.text.isEmpty) {
+                    return "Message Can't Be Empty";
+                  }
+                },
+                onSaved: (value) {
+                  messageEditingController.text = value!;
+                },
+                textInputAction: TextInputAction.done,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                  hintText: "Enter Message",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                )),
+            submitButton(),
+          ],
+        ),
       ),
     );
   }
@@ -248,89 +251,136 @@ class _CreateMessageState extends State<CreateMessage> {
   }
 
   Widget submitButton(){
-    return Material(
-      elevation: 5,
-      borderRadius: BorderRadius.circular(30),
-      color: Colors.redAccent,
-      child: MaterialButton(
-          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          minWidth: MediaQuery.of(context).size.width,
-          onPressed: () {
-            setState(() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/7),
+      child: Material(
+        elevation: 5,
+        borderRadius: BorderRadius.circular(10),
+        color: Theme.of(context).primaryColor,
+        child: MaterialButton(
+            padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+            minWidth: MediaQuery.of(context).size.width,
+            onPressed: () {
               postDetailsToFirestore();
-            });
-
-          },
-          child: Text(
-            hideMainForm ? "SignUp" : "Next",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-          )),
+            },
+            child: Text(
+              "Create Message",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+            )),
+      ),
     );
+
   }
 
   Widget subForm(){
     return Column(
       children: [
-        DropdownButton(
-            hint: Text("Choose Batch"),
-            isExpanded: true,
-            value: selectedBatch,
-            items: batchData
-                .map((e) => DropdownMenuItem(child: Text(e['batchName']), value: e['batchId'],))
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedBatchId = value.toString();
-                selectedBatch = value.toString();
+        SizedBox(height: 20,),
+        SizedBox(height: 20,),
 
-              });
-            }
-        ),
-        DropdownButton(
-            hint: Text("Choose Department"),
-            isExpanded: true,
-            value: selectedDept,
-            items: deptData
-                .map((e) => DropdownMenuItem(child: Text(e['deptName']), value: e['deptId'],))
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedDeptId = value.toString();
-                selectedDept = value.toString();
-              });
-            }
-        ),
-        DropdownButton(
-            hint: Text("Choose Batch"),
-            isExpanded: true,
-            value: selectedDiv,
-            items: divData
-                .map((e) => DropdownMenuItem(child: Text(e['divName']), value: e['divId'],))
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedDivId = value.toString();
-                selectedDiv = value.toString();
-              });
-            }
-        ),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal:10),
+          decoration: ShapeDecoration(
+            shape: RoundedRectangleBorder(
+              side: BorderSide(width: 1.0, style: BorderStyle.solid,color: Color(0xffC4C4C4)),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
+          ),
+          child: DropdownButton(
+              hint: Text("Choose Batch"),
+              underline: Text(""),
+              isExpanded: true,
+              value: selectedBatch,
+              items: batchData
+                  .map((e) => DropdownMenuItem(child: Text(e['batchName']), value: e['batchId'],))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedBatchId = value.toString();
+                  selectedBatch = value.toString();
 
-        DropdownButton(
-            hint: Text("Choose Category"),
-            isExpanded: true,
-            value: selectedCate,
-            items: cateData
-                .map((e) => DropdownMenuItem(child: Text(e['cateName']), value: e['cateId'],))
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedCateId = value.toString();
-                selectedCate = value.toString();
-              });
-            }
+                });
+              }
+          ),
         ),
+        SizedBox(height: 20,),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal:10),
+          decoration: ShapeDecoration(
+            shape: RoundedRectangleBorder(
+              side: BorderSide(width: 1.0, style: BorderStyle.solid,color: Color(0xffC4C4C4)),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
+          ),
+          child: DropdownButton(
+              underline: Text(""),
+              hint: Text("Choose Department"),
+              isExpanded: true,
+              value: selectedDept,
+              items: deptData
+                  .map((e) => DropdownMenuItem(child: Text(e['deptName']), value: e['deptId'],))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedDeptId = value.toString();
+                  selectedDept = value.toString();
+                });
+              }
+          ),
+        ),
+        SizedBox(height: 20,),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal:10),
+          decoration: ShapeDecoration(
+            shape: RoundedRectangleBorder(
+              side: BorderSide(width: 1.0, style: BorderStyle.solid,color: Color(0xffC4C4C4)),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
+          ),
+          child: DropdownButton(
+              underline: Text(""),
+              hint: Text("Choose Batch"),
+              isExpanded: true,
+              value: selectedDiv,
+              items: divData
+                  .map((e) => DropdownMenuItem(child: Text(e['divName']), value: e['divId'],))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedDivId = value.toString();
+                  selectedDiv = value.toString();
+                });
+              }
+          ),
+        ),
+        SizedBox(height: 20,),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal:10),
+          decoration: ShapeDecoration(
+            shape: RoundedRectangleBorder(
+              side: BorderSide(width: 1.0, style: BorderStyle.solid,color: Color(0xffC4C4C4)),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
+          ),
+          child: DropdownButton(
+              underline: Text(""),
+              hint: Text("Choose Category"),
+              isExpanded: true,
+              value: selectedCate,
+              items: cateData
+                  .map((e) => DropdownMenuItem(child: Text(e['cateName']), value: e['cateId'],))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedCateId = value.toString();
+                  selectedCate = value.toString();
+                });
+              }
+          ),
+        ),
+        SizedBox(height: 20,),
       ],
     );
   }
