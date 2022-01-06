@@ -48,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   refreshData(){
+    cateData.clear();
     setState(() {
       isLoading = true;
     });
@@ -250,6 +251,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                           ],),
                                           SizedBox(height: 30,),
                                           Text(messages[i].messageData!,overflow: TextOverflow.ellipsis),
+                                          SizedBox(height: 10,),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              RaisedButton(color: Colors.red,onPressed: (){
+                                                setState(() {
+                                                  isLoading = true;
+                                                });
+                                                FirebaseFirestore.instance
+                                                    .collection('messages')
+                                                    .doc(messagesId[i])
+                                                    .delete().then((value) => setState(() {
+                                                  refreshData();
+                                                }));
+
+                                              }, child: Text('Delete',style: TextStyle(color: Colors.white),))
+                                            ],
+                                          )
                                         ],),
                                       ),
                                     ),

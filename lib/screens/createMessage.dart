@@ -242,7 +242,7 @@ class _CreateMessageState extends State<CreateMessage> {
       'messageData':messageEditingController.text
     });
     callOnFcmApiSendPushNotifications(["dJ9L_VakN0oGkUi5kAV00G:APA91bGvemgujZdtd3YnSCCgRUiIRkxQQdp6qF-91Oj46FyWKUx3Yps8q4w1FiKaJySeirttS7c1yT3Ebay4LQ8qaP19FhDnreu9CCpm4EgezfPzXr2hoKkyHEElbFYavJn_7Wepl_kd"]);
-    Fluttertoast.showToast(msg: "Account created successfully :) ");
+    Fluttertoast.showToast(msg: "Message Notified :) ");
 
     setState(() {
       isLoading =false;
