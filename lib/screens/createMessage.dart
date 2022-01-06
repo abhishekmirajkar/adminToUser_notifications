@@ -202,6 +202,7 @@ class _CreateMessageState extends State<CreateMessage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 )),
+            SizedBox(height: 30,),
             submitButton(),
           ],
         ),

@@ -7,6 +7,23 @@ import 'package:flutter/material.dart';
 
 import 'screens/createMessage.dart';
 import 'screens/manageBatches.dart';
+
+class CustomDrawer extends StatefulWidget {
+  const CustomDrawer({Key? key}) : super(key: key);
+
+  @override
+  _CustomDrawerState createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+
+
 class drawer extends StatefulWidget {
   const drawer({Key? key}) : super(key: key);
 

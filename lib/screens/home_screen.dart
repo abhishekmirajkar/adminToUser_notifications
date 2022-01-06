@@ -8,7 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../drawer.dart';
+import 'createMessage.dart';
 import 'login_screen.dart';
+import 'manageBatches.dart';
+import 'manageCategories.dart';
+import 'manageDept.dart';
+import 'manageDiv.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -87,10 +92,103 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return DefaultTabController(
         length: cateData.length,
         child: new Scaffold(
-          drawer: drawer(),
             appBar: new AppBar(
               title: const Text("Student Connect"),
               centerTitle: true,
+              leading: Text(''),
+              actions: [GestureDetector(
+                onTap:(){
+                  showDialog(
+                    context: context,
+                    builder: (_) => Material(
+                      type: MaterialType.transparency,
+                      child: Align(
+                        alignment: Alignment.topRight,
+                        // Aligns the container to center
+                        child: Container(
+                          width: MediaQuery.of(context).size.width/2,
+                          child: Card(
+                            // A simplified version of dialog.
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: [
+                                SizedBox(height: 15,),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                        (context),
+                                        MaterialPageRoute(builder: (context) => CreateMessage()));
+                                  },
+                                    child: Center(child: Text('Create Message'))),
+                                Divider(color: Colors.grey,height: 30,thickness: 2,),
+                                GestureDetector(
+                                    onTap: (){
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          (context),
+                                          MaterialPageRoute(builder: (context) => ManageBatch()));
+                                    },
+                                    child: Center(child: Text('Modify Batch'))),
+                                Divider(color: Colors.grey,height: 30,thickness: 2,),
+                                GestureDetector(
+                                    onTap: (){
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          (context),
+                                          MaterialPageRoute(builder: (context) => ManageDept()));
+                                    },
+                                    child: Center(child: Text('Modify Department'))),
+                                Divider(color: Colors.grey,height: 30,thickness: 2,),
+                                GestureDetector(
+                                    onTap: (){
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          (context),
+                                          MaterialPageRoute(builder: (context) => ManageDiv()));
+                                    },
+                                    child: Center(child: Text('Modify Division'))),
+                                Divider(color: Colors.grey,height: 30,thickness: 2,),
+                                GestureDetector(
+                                    onTap: (){
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          (context),
+                                          MaterialPageRoute(builder: (context) => ManageCategory()));
+                                    },
+                                    child: Center(child: Text('Modify Category'))),
+                                Divider(color: Colors.grey,height: 30,thickness: 2,),
+                                GestureDetector(
+                                    onTap: (){
+                                      Navigator.pop(context);
+                                      // Navigator.push(
+                                      //     (context),
+                                      //     MaterialPageRoute(builder: (context) => ManageBatch()));
+                                    },
+                                    child: Center(child: Text('Profile'))),
+                                Divider(color: Colors.grey,height: 30,thickness: 2,),
+                                GestureDetector(
+                                    onTap: ()async{
+                                      await FirebaseAuth.instance.signOut();
+                                      Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(builder: (context) => LoginScreen()));
+                                      Navigator.pop(context);
+                                    },
+                                    child: Center(child: Text('Logout'))),
+                                SizedBox(height: 15,),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right:8.0),
+                  child: Icon(Icons.menu),
+                ),
+              )],
             ),
 
             body: isLoading ? Center(child: CircularProgressIndicator.adaptive(),):SmartRefresher(
@@ -121,6 +219,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   Expanded(
                     // height:MediaQuery.of(context).size.height-(MediaQuery.of(context).size.height * 0.2),
                     child: new TabBarView(
+                      controller: _controller,
                       children: List<Widget>.generate(
                           cateData.length, (int index) {
                         return Padding(
