@@ -320,6 +320,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           .then((value) => {postDetailsToFirestore()})
           .catchError((e) {
         Fluttertoast.showToast(msg: e.message);
+        setState(() {
+          isLoading = false;
+        });
       });
     } on FirebaseAuthException catch (error) {
       switch (error.code) {
@@ -345,7 +348,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           errorMessage = "An undefined Error happened.";
       }
       Fluttertoast.showToast(msg: errorMessage!);
-      print(error.code);
+      setState(() {
+        isLoading = false;
+      });
     }
     setState(() {
       isLoading = false;
@@ -371,7 +376,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.secondName = secondNameEditingController.text;
 
     await firebaseFirestore
-        .collection("users")
+        .collection("admins")
         .doc(user.uid)
         .set(userModel.toMap());
     Fluttertoast.showToast(msg: "Account created successfully :) ");

@@ -100,7 +100,9 @@ class _drawerState extends State<drawer> {
             title: const Text('Logout'),
             onTap: () {
               logout(context);
-              Navigator.pop(context);
+              Navigator.pushReplacement(
+                  (context),
+                  MaterialPageRoute(builder: (context) => LoginScreen()));
             },
           ),
         ],
