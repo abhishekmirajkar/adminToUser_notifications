@@ -221,7 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.mail),
             contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-            hintText: "Email",
+            hintText: "Please enter your Email ID",
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),

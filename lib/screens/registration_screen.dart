@@ -208,8 +208,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           minWidth: MediaQuery.of(context).size.width,
           onPressed: () {
             setState(() {
-              signUp(emailEditingController.text,
-                  passwordEditingController.text);
+             if(_formKey.currentState!.validate()){
+               signUp(emailEditingController.text,
+                   passwordEditingController.text);
+             }
             });
           },
           child: Text("SignUp",

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:admin_college_project/model/message_model.dart';
 import 'package:admin_college_project/model/user_model.dart';
+import 'package:admin_college_project/screens/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -75,8 +76,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           .then((value) {
         for (int i = 0; i < value.docs.length; i++) {
           messageModel = messageModelFromJson(json.encode(value.docs[i].data()));
-          messages.add(messageModel);
-          messagesId.add(value.docs[i].id);
+          if(messageModel.adminId == user?.uid){
+            messages.add(messageModel);
+            messagesId.add(value.docs[i].id);
+          }
+
         }
         setState(() {
           isLoading = false;
@@ -162,9 +166,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 GestureDetector(
                                     onTap: (){
                                       Navigator.pop(context);
-                                      // Navigator.push(
-                                      //     (context),
-                                      //     MaterialPageRoute(builder: (context) => ManageBatch()));
+                                      Navigator.push(
+                                          (context),
+                                          MaterialPageRoute(builder: (context) => Profile()));
                                     },
                                     child: Center(child: Text('Profile'))),
                                 Divider(color: Colors.grey,height: 30,thickness: 2,),

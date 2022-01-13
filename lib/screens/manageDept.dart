@@ -12,6 +12,7 @@ class _ManageDeptState extends State<ManageDept> {
   var deptData = [];
   bool isLoading = true;
   final deptEditingController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -87,58 +88,61 @@ class _ManageDeptState extends State<ManageDept> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             elevation: 16,
-                            child: Container(
-                              child: ListView(
-                                shrinkWrap: true,
-                                children: <Widget>[
-                                  SizedBox(height: 20),
-                                  Center(child: Container(
-                                    width: MediaQuery.of(context).size.width/1.4,
-                                    child: TextFormField(
-                                        keyboardType: TextInputType.multiline,
-                                        autofocus: false,
-                                        controller: deptEditingController,
-                                        validator: (value) {
-                                          if (deptEditingController.text.isEmpty) {
-                                            return "Department Can't Be Empty";
-                                          }
-                                        },
-                                        onSaved: (value) {
-                                          deptEditingController.text = value!;
-                                        },
-                                        textInputAction: TextInputAction.done,
-                                        decoration: InputDecoration(
-                                          prefixIcon: Icon(Icons.message),
-                                          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                                          hintText: "Enter Departmen Name",
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                        )),
-                                  )),
-                                  SizedBox(height: 20),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/8),
-                                    child: ElevatedButton(onPressed: (){
-                                      setState(() {
-                                        isLoading = true;
-                                      });
-                                      if(deptEditingController.text != null ){
-                                        var ref =  FirebaseFirestore.instance
-                                            .collection('department').doc();
-                                        print(ref.id);
-                                        ref.set({
-                                          "deptId": ref.id,
-                                          "deptName": deptEditingController.text
-                                        }).then((value) => setState(() {
-                                          Navigator.pop(context);
-                                          deptEditingController.text = "";
-                                          fetchData();
-                                        }));
-                                      }
-                                    }, child: Text("Save")),
-                                  )
-                                ],
+                            child: Form(
+                              key: _formKey,
+                              child: Container(
+                                child: ListView(
+                                  shrinkWrap: true,
+                                  children: <Widget>[
+                                    SizedBox(height: 20),
+                                    Center(child: Container(
+                                      width: MediaQuery.of(context).size.width/1.4,
+                                      child: TextFormField(
+                                          keyboardType: TextInputType.multiline,
+                                          autofocus: false,
+                                          controller: deptEditingController,
+                                          validator: (value) {
+                                            if (deptEditingController.text.isEmpty) {
+                                              return "Department Can't Be Empty";
+                                            }
+                                          },
+                                          onSaved: (value) {
+                                            deptEditingController.text = value!;
+                                          },
+                                          textInputAction: TextInputAction.done,
+                                          decoration: InputDecoration(
+                                            prefixIcon: Icon(Icons.message),
+                                            contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                            hintText: "Enter Departmen Name",
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                          )),
+                                    )),
+                                    SizedBox(height: 20),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/8),
+                                      child: ElevatedButton(onPressed: (){
+                                        if(_formKey.currentState!.validate() && deptEditingController.text != null ){
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          var ref =  FirebaseFirestore.instance
+                                              .collection('department').doc();
+                                          print(ref.id);
+                                          ref.set({
+                                            "deptId": ref.id,
+                                            "deptName": deptEditingController.text
+                                          }).then((value) => setState(() {
+                                            Navigator.pop(context);
+                                            deptEditingController.text = "";
+                                            fetchData();
+                                          }));
+                                        }
+                                      }, child: Text("Save")),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -170,6 +174,8 @@ class _ItemTileState extends State<ItemTile> {
   bool isEditable = true;
   final textEditingController = TextEditingController();
   bool isLoading = false;
+  final _formKey1 = GlobalKey<FormState>();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -187,38 +193,41 @@ class _ItemTileState extends State<ItemTile> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width -
-                MediaQuery.of(context).size.width / 3,
-            child: TextFormField(
-                keyboardType: TextInputType.multiline,
-                autofocus: false,
-                controller: textEditingController,
-                validator: (value) {
-                  if (textEditingController.text.isEmpty) {
-                    return "Department Can't Be Empty";
-                  }
-                },
-                onChanged: (value) {
-                  isEditable = false;
-                },
-                onSaved: (value) {
-                  textEditingController.text = value!;
-                },
-                textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                  hintText: widget.tileData[widget.index]['deptName'],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                )),
+          Form(
+            key: _formKey1,
+            child: Container(
+              width: MediaQuery.of(context).size.width -
+                  MediaQuery.of(context).size.width / 3,
+              child: TextFormField(
+                  keyboardType: TextInputType.multiline,
+                  autofocus: false,
+                  controller: textEditingController,
+                  validator: (value) {
+                    if (textEditingController.text.isEmpty) {
+                      return "Department Can't Be Empty";
+                    }
+                  },
+                  onChanged: (value) {
+                    isEditable = false;
+                  },
+                  onSaved: (value) {
+                    textEditingController.text = value!;
+                  },
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                    hintText: widget.tileData[widget.index]['deptName'],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  )),
+            ),
           ),
           SizedBox(width: 10,),
           GestureDetector(
               onTap: () {
                 setState(() {
-                  if (isEditable) {
+                  if (_formKey1.currentState!.validate() && isEditable) {
                     setState(() {
                       isLoading = true;
                     });
