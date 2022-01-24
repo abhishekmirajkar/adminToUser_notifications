@@ -1,5 +1,6 @@
 import 'package:admin_college_project/screens/home_screen.dart';
 import 'package:admin_college_project/screens/login_screen.dart';
+import 'package:admin_college_project/screens/splash.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: kPrimaryColor,
       ),
       debugShowCheckedModeBanner: false,
-      home: FirebaseAuth.instance.currentUser != null ? HomeScreen () : LoginScreen(),
+      home: SplashScreen(),
     );
   }
 }

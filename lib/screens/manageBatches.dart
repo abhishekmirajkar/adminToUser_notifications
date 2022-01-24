@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,13 +16,21 @@ class _ManageBatchState extends State<ManageBatch> {
   bool isLoading = true;
   final _formKey = GlobalKey<FormState>();
   final batchEditingController = TextEditingController();
+  String batchCode = '';
+  final _chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  Random _rnd = Random();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchData();
+    batchCode = getRandomString(6);
   }
+
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
   fetchData(){
     batchData.clear();
@@ -86,6 +95,7 @@ class _ManageBatchState extends State<ManageBatch> {
                           showDialog(
                               context: context,
                               builder: (context) {
+                                batchCode = getRandomString(6);
                                 return Dialog(
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10)),
@@ -123,6 +133,27 @@ class _ManageBatchState extends State<ManageBatch> {
                                           )),
                                         ),
                                         SizedBox(height: 20),
+                                        Center(child: Container(
+                                          width: MediaQuery.of(context).size.width/1.4,
+                                          child: TextFormField(
+                                              autofocus: false,
+                                              validator: (value) {
+                                                if (batchCode.isEmpty) {
+                                                  return "Batch Code Can't Be Empty";
+                                                }
+                                              },
+                                              enabled: false,
+                                              textInputAction: TextInputAction.done,
+                                              decoration: InputDecoration(
+                                                prefixIcon: Icon(Icons.qr_code),
+                                                contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                                hintText: batchCode,
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                ),
+                                              )),
+                                        )),
+                                        SizedBox(height: 20),
                                         Padding(
                                           padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/8),
                                           child: ElevatedButton(onPressed: (){
@@ -135,7 +166,8 @@ class _ManageBatchState extends State<ManageBatch> {
                                              print(ref.id);
                                               ref.set({
                                                 "batchId": ref.id,
-                                                "batchName": batchEditingController.text
+                                                "batchName": batchEditingController.text,
+                                                "batchCode": batchCode,
                                               }).then((value) => setState(() {
                                                 Navigator.pop(context);
                                                 batchEditingController.text = "";
@@ -177,11 +209,13 @@ class _ItemTileState extends State<ItemTile> {
   final textEditingController = TextEditingController();
   bool isLoading = false;
   final _formKey1 = GlobalKey<FormState>();
+  late String batchCode;
 
   @override
   void initState() {
     // TODO: implement initState
     textEditingController.text = widget.tileData[widget.index]['batchName'];
+    batchCode = widget.tileData[widget.index]['batchCode'];
   }
 
   @override
@@ -238,7 +272,8 @@ class _ItemTileState extends State<ItemTile> {
                               .doc(widget.tileData[widget.index]['batchId'])
                               .set({
                             "batchId": widget.tileData[widget.index]['batchId'],
-                            "batchName": textEditingController.text
+                            "batchName": textEditingController.text,
+                            "batchCode": batchCode,
                           }).then((value) => setState(() {
                                     isEditable = false;
                                     isLoading = false;
