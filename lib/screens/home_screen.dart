@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:admin_college_project/model/message_model.dart';
 import 'package:admin_college_project/model/user_model.dart';
+import 'package:admin_college_project/screens/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -75,8 +76,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           .then((value) {
         for (int i = 0; i < value.docs.length; i++) {
           messageModel = messageModelFromJson(json.encode(value.docs[i].data()));
-          messages.add(messageModel);
-          messagesId.add(value.docs[i].id);
+          if(messageModel.adminId == user?.uid){
+            messages.add(messageModel);
+            messagesId.add(value.docs[i].id);
+          }
+
         }
         setState(() {
           isLoading = false;
@@ -92,8 +96,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     return DefaultTabController(
         length: cateData.length,
-        child: Scaffold(
-            appBar:  AppBar(
+        child: new Scaffold(
+            appBar: new AppBar(
               title: const Text("Student Connect"),
               centerTitle: true,
               leading: Text(''),
@@ -162,18 +166,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 GestureDetector(
                                     onTap: (){
                                       Navigator.pop(context);
-                                      // Navigator.push(
-                                      //     (context),
-                                      //     MaterialPageRoute(builder: (context) => ManageBatch()));
+                                      Navigator.push(
+                                          (context),
+                                          MaterialPageRoute(builder: (context) => Profile()));
                                     },
                                     child: Center(child: Text('Profile'))),
                                 Divider(color: Colors.grey,height: 30,thickness: 2,),
                                 GestureDetector(
                                     onTap: ()async{
                                       await FirebaseAuth.instance.signOut();
-                                      Navigator.of(context).pushReplacement(
-                                          MaterialPageRoute(builder: (context) => LoginScreen()));
-                                      Navigator.pop(context);
+                                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                                          LoginScreen()), (Route<dynamic> route) => false);
                                     },
                                     child: Center(child: Text('Logout'))),
                                 SizedBox(height: 15,),
@@ -219,65 +222,67 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                   Expanded(
                     // height:MediaQuery.of(context).size.height-(MediaQuery.of(context).size.height * 0.2),
-                    child: TabBarView(
+                    child: new TabBarView(
                       controller: _controller,
                       children: List<Widget>.generate(
                           cateData.length, (int index) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: ListView(shrinkWrap: true,children:[
-                            SizedBox(height: 20,),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: AlwaysScrollableScrollPhysics(),
-                              itemCount: messages.length,
-                              itemBuilder: (context, i) {
-                                return messages[i].cateId == cateData[index]['cateId'] ? Padding(
-                                  padding: const EdgeInsets.only(bottom: 15.0),
-                                  child: ConstrainedBox(
-                                    constraints: BoxConstraints(minHeight: 120),
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        side: new BorderSide(color: Theme.of(context).primaryColor, width: 2.0),
-                                        borderRadius: BorderRadius.circular(10.0),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-                                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [
-                                            Text(messages[i].admin!,style: TextStyle(fontWeight: FontWeight.w600),),
-                                            Text(cateData[index]['cateName'],style: TextStyle(fontWeight: FontWeight.w600)),
-                                            Text(messages[i].date!,style: TextStyle(fontWeight: FontWeight.w600)),
+                          child: SingleChildScrollView(
+                            child: new Column(children:[
+                              SizedBox(height: 20,),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: messages.length,
+                                itemBuilder: (context, i) {
+                                  return messages[i].cateId == cateData[index]['cateId'] ? Padding(
+                                    padding: const EdgeInsets.only(bottom: 15.0),
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(minHeight: 120),
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                          side: new BorderSide(color: Theme.of(context).primaryColor, width: 2.0),
+                                          borderRadius: BorderRadius.circular(10.0),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
+                                            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [
+                                              Text(messages[i].admin!,style: TextStyle(fontWeight: FontWeight.w600),),
+                                              Text(cateData[index]['cateName'],style: TextStyle(fontWeight: FontWeight.w600)),
+                                              Text(messages[i].date!,style: TextStyle(fontWeight: FontWeight.w600)),
 
+                                            ],),
+                                            SizedBox(height: 30,),
+                                            Text(messages[i].messageData!,overflow: TextOverflow.ellipsis),
+                                            SizedBox(height: 10,),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              children: [
+                                                RaisedButton(color: Colors.red,onPressed: (){
+                                                  setState(() {
+                                                    isLoading = true;
+                                                  });
+                                                  FirebaseFirestore.instance
+                                                      .collection('messages')
+                                                      .doc(messagesId[i])
+                                                      .delete().then((value) => setState(() {
+                                                    refreshData();
+                                                  }));
+
+                                                }, child: Text('Delete',style: TextStyle(color: Colors.white),))
+                                              ],
+                                            )
                                           ],),
-                                          SizedBox(height: 30,),
-                                          Text(messages[i].messageData!,overflow: TextOverflow.ellipsis),
-                                          SizedBox(height: 10,),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              RaisedButton(color: Colors.red,onPressed: (){
-                                                setState(() {
-                                                  isLoading = true;
-                                                });
-                                                FirebaseFirestore.instance
-                                                    .collection('messages')
-                                                    .doc(messagesId[i])
-                                                    .delete().then((value) => setState(() {
-                                                  refreshData();
-                                                }));
-
-                                              }, child: Text('Delete',style: TextStyle(color: Colors.white),))
-                                            ],
-                                          )
-                                        ],),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ): Container();
-                              },
-                            )
-                          ]),
+                                  ): Container();
+                                },
+                              )
+                            ]),
+                          ),
                         );
                       }),
                     ),

@@ -12,6 +12,7 @@ class _ManageDivState extends State<ManageDiv> {
   var divData = [];
   bool isLoading = true;
   final divEditingController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -92,8 +93,9 @@ class _ManageDivState extends State<ManageDiv> {
                                 shrinkWrap: true,
                                 children: <Widget>[
                                   SizedBox(height: 20),
-                                  Center(child: Container(
+                                  Form(key: _formKey,child: Container(
                                     width: MediaQuery.of(context).size.width/1.4,
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
                                     child: TextFormField(
                                         keyboardType: TextInputType.multiline,
                                         autofocus: false,
@@ -118,9 +120,9 @@ class _ManageDivState extends State<ManageDiv> {
                                   )),
                                   SizedBox(height: 20),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/8),
+                                    padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/8.5),
                                     child: ElevatedButton(onPressed: (){
-                                      if(divEditingController.text != null ){
+                                      if(_formKey.currentState!.validate() && divEditingController.text != null ){
                                         setState(() {
                                           isLoading = true;
                                         });
@@ -170,6 +172,8 @@ class _ItemTileState extends State<ItemTile> {
   bool isEditable = true;
   final textEditingController = TextEditingController();
   bool isLoading = false;
+  final _formKey1 = GlobalKey<FormState>();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -187,38 +191,41 @@ class _ItemTileState extends State<ItemTile> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width -
-                MediaQuery.of(context).size.width / 3,
-            child: TextFormField(
-                keyboardType: TextInputType.multiline,
-                autofocus: false,
-                controller: textEditingController,
-                validator: (value) {
-                  if (textEditingController.text.isEmpty) {
-                    return "Division Can't Be Empty";
-                  }
-                },
-                onChanged: (value) {
-                  isEditable = false;
-                },
-                onSaved: (value) {
-                  textEditingController.text = value!;
-                },
-                textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                  hintText: widget.tileData[widget.index]['divName'],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                )),
+          Form(
+            key: _formKey1,
+            child: Container(
+              width: MediaQuery.of(context).size.width -
+                  MediaQuery.of(context).size.width / 3,
+              child: TextFormField(
+                  keyboardType: TextInputType.multiline,
+                  autofocus: false,
+                  controller: textEditingController,
+                  validator: (value) {
+                    if (textEditingController.text.isEmpty) {
+                      return "Division Can't Be Empty";
+                    }
+                  },
+                  onChanged: (value) {
+                    isEditable = false;
+                  },
+                  onSaved: (value) {
+                    textEditingController.text = value!;
+                  },
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                    hintText: widget.tileData[widget.index]['divName'],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  )),
+            ),
           ),
           SizedBox(width: 10,),
           GestureDetector(
               onTap: () {
                 setState(() {
-                  if (isEditable) {
+                  if (_formKey1.currentState!.validate() && isEditable) {
                     setState(() {
                       isLoading = true;
                     });

@@ -10,7 +10,6 @@ import 'package:http/http.dart' as http;
 
 import 'home_screen.dart';
 
-
 class CreateMessage extends StatefulWidget {
   const CreateMessage({Key? key}) : super(key: key);
 
@@ -21,11 +20,10 @@ class CreateMessage extends StatefulWidget {
 class _CreateMessageState extends State<CreateMessage> {
   final messageEditingController = TextEditingController();
   final _auth = FirebaseAuth.instance;
-
+  final _formKey = GlobalKey<FormState>();
 
   late String token;
-  List<String> userToSendNotiToken =[];
-
+  List<String> userToSendNotiToken = [];
 
   bool hideMainForm = false;
   bool isLoading = true;
@@ -41,15 +39,13 @@ class _CreateMessageState extends State<CreateMessage> {
   String? selectedDeptId;
   String? selectedCateId;
 
-
-  var batchData=[];
-  var deptData=[];
-  var divData=[];
-  var cateData=[];
+  var batchData = [];
+  var deptData = [];
+  var divData = [];
+  var cateData = [];
   UserModel loggedInUser = UserModel();
 
   String date = "";
-
 
   @override
   void initState() {
@@ -62,81 +58,71 @@ class _CreateMessageState extends State<CreateMessage> {
         .doc(user!.uid)
         .get()
         .then((value) {
-          print(value.data());
+      print(value.data());
       loggedInUser = UserModel.fromMap(value.data());
       setState(() {});
     });
 
-    FirebaseFirestore.instance
-        .collection('batches')
-        .get()
-        .then((value) async{
-      token = "AAAAmGAFB58:APA91bEFNzI2V6tOSiH_G0wNoiAMG1Cjvt_DkM5xHYPY0lh2Vx659FCZ5Avw1QbsXlKvF3_Vn55YEI5Z-oHtqv2NEmAsqiirTdNPGxuFdhHvHh0q_yc4Jb-Kj-28EWQ11BqZnsjVBE7h";
+    FirebaseFirestore.instance.collection('batches').get().then((value) async {
+      token =
+          "AAAAmGAFB58:APA91bEFNzI2V6tOSiH_G0wNoiAMG1Cjvt_DkM5xHYPY0lh2Vx659FCZ5Avw1QbsXlKvF3_Vn55YEI5Z-oHtqv2NEmAsqiirTdNPGxuFdhHvHh0q_yc4Jb-Kj-28EWQ11BqZnsjVBE7h";
       for (int i = 0; i < value.docs.length; i++) {
         batchData.add(value.docs[i].data());
       }
 
-      FirebaseFirestore.instance
-          .collection('divisions')
-          .get()
-          .then((value) {
+      FirebaseFirestore.instance.collection('divisions').get().then((value) {
         for (int i = 0; i < value.docs.length; i++) {
           divData.add(value.docs[i].data());
         }
-        FirebaseFirestore.instance
-            .collection('department')
-            .get()
-            .then((value) {
+        FirebaseFirestore.instance.collection('department').get().then((value) {
           for (int i = 0; i < value.docs.length; i++) {
             deptData.add(value.docs[i].data());
           }
-          FirebaseFirestore.instance
-              .collection('category')
-              .get()
-              .then((value) {
+          FirebaseFirestore.instance.collection('category').get().then((value) {
             for (int i = 0; i < value.docs.length; i++) {
               cateData.add(value.docs[i].data());
             }
             setState(() {
-              isLoading =false;
+              isLoading = false;
             });
           });
         });
-
       });
     });
   }
 
-
- callOnFcmApiSendPushNotifications(List <String> userToken){
+  callOnFcmApiSendPushNotifications(List<String> userToken) {
     userToSendNotiToken.clear();
     FirebaseFirestore.instance
         .collection('users')
-        .where("batchId", isEqualTo: selectedBatchId)
-        .where("deptId", isEqualTo: selectedDeptId)
-        .where("divId", isEqualTo: selectedDivId)
-        .get().then((value)async{
+        .get()
+        .then((value) async {
       for (int i = 0; i < value.docs.length; i++) {
-        userToSendNotiToken.add(value.docs[i].data()['fcmToekn'].toString());
+        if (selectedBatchId == value.docs[i].data()['batchId'] &&
+            selectedDeptId == value.docs[i].data()['deptId'] &&
+            selectedDivId == value.docs[i].data()['divId']) {
+          print("MATCH");
+          userToSendNotiToken.add(value.docs[i].data()['fcmToekn'].toString());
+        }
       }
-      print(userToSendNotiToken);
 
       final postUrl = 'fcm.googleapis.com';
       final data = {
-        "registration_ids" : userToSendNotiToken,
-        "collapse_key" : "type_a",
-        "notification" : {
+        "registration_ids": userToSendNotiToken,
+        "collapse_key": "type_a",
+        "notification": {
           "title": 'New Message from ${loggedInUser.firstName}',
-          "body" : messageEditingController.text,
+          "body": messageEditingController.text,
         }
       };
 
       final headers = {
         'content-type': 'application/json',
-        'Authorization': "key=AAAAmGAFB58:APA91bEFNzI2V6tOSiH_G0wNoiAMG1Cjvt_DkM5xHYPY0lh2Vx659FCZ5Avw1QbsXlKvF3_Vn55YEI5Z-oHtqv2NEmAsqiirTdNPGxuFdhHvHh0q_yc4Jb-Kj-28EWQ11BqZnsjVBE7h"
+        'Authorization':
+            "key=AAAAmGAFB58:APA91bEFNzI2V6tOSiH_G0wNoiAMG1Cjvt_DkM5xHYPY0lh2Vx659FCZ5Avw1QbsXlKvF3_Vn55YEI5Z-oHtqv2NEmAsqiirTdNPGxuFdhHvHh0q_yc4Jb-Kj-28EWQ11BqZnsjVBE7h"
       };
 
-      final response = await http.post(Uri.https(postUrl,"/fcm/send"),
+      final response = await http.post(Uri.https(postUrl, "/fcm/send"),
           body: json.encode(data),
           encoding: Encoding.getByName('utf-8'),
           headers: headers);
@@ -152,17 +138,12 @@ class _CreateMessageState extends State<CreateMessage> {
         return false;
       }
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
     DateTime now = new DateTime.now();
     DateTime datee = new DateTime(now.year, now.month, now.day);
-
-    print(datee.day);
-    print(datee.month);
-    print(datee.year);
     date = "${datee.day}:${datee.month}:${datee.year}";
     return Scaffold(
       //drawer: drawer(),
@@ -175,45 +156,58 @@ class _CreateMessageState extends State<CreateMessage> {
             }),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Column(
-          children: [
-            Text("Create Message",textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 26),),
-            subForm(),
-            TextFormField(
-                keyboardType: TextInputType.multiline,
-                autofocus: false,
-                maxLines: 10,
-                controller: messageEditingController,
-                validator: (value) {
-                  if (messageEditingController.text.isEmpty) {
-                    return "Message Can't Be Empty";
-                  }
-                },
-                onSaved: (value) {
-                  messageEditingController.text = value!;
-                },
-                textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                  hintText: "Enter Message",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                )),
-            SizedBox(height: 30,),
-            submitButton(),
-          ],
-        ),
-      ),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Text(
+                      "Create Message",
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(fontWeight: FontWeight.w700, fontSize: 26),
+                    ),
+                    subForm(),
+                    TextFormField(
+                        keyboardType: TextInputType.multiline,
+                        autofocus: false,
+                        maxLines: 10,
+                        controller: messageEditingController,
+                        validator: (value) {
+                          if (messageEditingController.text.isEmpty) {
+                            return "Message Can't Be Empty";
+                          }
+                        },
+                        onSaved: (value) {
+                          messageEditingController.text = value!;
+                        },
+                        textInputAction: TextInputAction.done,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                          hintText: "Enter Message",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        )),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    submitButton(),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
   postDetailsToFirestore() async {
-
     setState(() {
-      isLoading =true;
+      isLoading = true;
     });
 
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
@@ -226,34 +220,32 @@ class _CreateMessageState extends State<CreateMessage> {
     messageModel.batchId = selectedBatchId;
     messageModel.deptId = selectedDeptId;
     messageModel.divId = selectedDivId;
-    messageModel.cateId= selectedCateId;
+    messageModel.cateId = selectedCateId;
 
-    await firebaseFirestore
-        .collection("messages")
-        .doc()
-        .set({
-      'adminId':user.uid,
-      'batchId':selectedBatchId,
-      'deptId':selectedDeptId,
-      'divId':selectedDivId,
-      'cateId':selectedCateId,
-      'date':date,
-      'admin':"${loggedInUser.firstName} ${loggedInUser.secondName}",
-      'messageData':messageEditingController.text
+    await firebaseFirestore.collection("messages").doc().set({
+      'adminId': user.uid,
+      'batchId': selectedBatchId,
+      'deptId': selectedDeptId,
+      'divId': selectedDivId,
+      'cateId': selectedCateId,
+      'date': date,
+      'admin': "${loggedInUser.firstName} ${loggedInUser.secondName}",
+      'messageData': messageEditingController.text
     });
-    callOnFcmApiSendPushNotifications(["dJ9L_VakN0oGkUi5kAV00G:APA91bGvemgujZdtd3YnSCCgRUiIRkxQQdp6qF-91Oj46FyWKUx3Yps8q4w1FiKaJySeirttS7c1yT3Ebay4LQ8qaP19FhDnreu9CCpm4EgezfPzXr2hoKkyHEElbFYavJn_7Wepl_kd"]);
-    Fluttertoast.showToast(msg: "Message Notified :) ");
-
+    callOnFcmApiSendPushNotifications([
+      "dJ9L_VakN0oGkUi5kAV00G:APA91bGvemgujZdtd3YnSCCgRUiIRkxQQdp6qF-91Oj46FyWKUx3Yps8q4w1FiKaJySeirttS7c1yT3Ebay4LQ8qaP19FhDnreu9CCpm4EgezfPzXr2hoKkyHEElbFYavJn_7Wepl_kd"
+    ]);
+    Fluttertoast.showToast(msg: "Message sent successfully");
+    Navigator.pop(context);
     setState(() {
-      isLoading =false;
+      isLoading = false;
     });
-
-
   }
 
-  Widget submitButton(){
+  Widget submitButton() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/7),
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width / 7),
       child: Material(
         elevation: 5,
         borderRadius: BorderRadius.circular(10),
@@ -262,30 +254,47 @@ class _CreateMessageState extends State<CreateMessage> {
             padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
             minWidth: MediaQuery.of(context).size.width,
             onPressed: () {
-              postDetailsToFirestore();
+              if (_formKey.currentState!.validate() &&
+                  selectedBatchId.runtimeType != Null &&
+                  selectedDeptId.runtimeType != Null &&
+                  selectedDivId.runtimeType != Null) {
+                setState(() {
+                  isLoading = true;
+                });
+                postDetailsToFirestore();
+              } else {
+                Fluttertoast.showToast(msg: "Please select all fields");
+              }
             },
             child: Text(
               "Create Message",
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
             )),
       ),
     );
-
   }
 
-  Widget subForm(){
+  Widget subForm() {
     return Column(
       children: [
-        SizedBox(height: 20,),
-        SizedBox(height: 20,),
-
+        SizedBox(
+          height: 20,
+        ),
+        SizedBox(
+          height: 20,
+        ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal:10),
+          padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.0, style: BorderStyle.solid,color: Color(0xffC4C4C4)),
+              side: BorderSide(
+                  width: 1.0,
+                  style: BorderStyle.solid,
+                  color: Color(0xffC4C4C4)),
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
           ),
@@ -295,23 +304,29 @@ class _CreateMessageState extends State<CreateMessage> {
               isExpanded: true,
               value: selectedBatch,
               items: batchData
-                  .map((e) => DropdownMenuItem(child: Text(e['batchName']), value: e['batchId'],))
+                  .map((e) => DropdownMenuItem(
+                        child: Text(e['batchName']),
+                        value: e['batchId'],
+                      ))
                   .toList(),
               onChanged: (value) {
                 setState(() {
                   selectedBatchId = value.toString();
                   selectedBatch = value.toString();
-
                 });
-              }
-          ),
+              }),
         ),
-        SizedBox(height: 20,),
+        SizedBox(
+          height: 20,
+        ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal:10),
+          padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.0, style: BorderStyle.solid,color: Color(0xffC4C4C4)),
+              side: BorderSide(
+                  width: 1.0,
+                  style: BorderStyle.solid,
+                  color: Color(0xffC4C4C4)),
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
           ),
@@ -321,22 +336,29 @@ class _CreateMessageState extends State<CreateMessage> {
               isExpanded: true,
               value: selectedDept,
               items: deptData
-                  .map((e) => DropdownMenuItem(child: Text(e['deptName']), value: e['deptId'],))
+                  .map((e) => DropdownMenuItem(
+                        child: Text(e['deptName']),
+                        value: e['deptId'],
+                      ))
                   .toList(),
               onChanged: (value) {
                 setState(() {
                   selectedDeptId = value.toString();
                   selectedDept = value.toString();
                 });
-              }
-          ),
+              }),
         ),
-        SizedBox(height: 20,),
+        SizedBox(
+          height: 20,
+        ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal:10),
+          padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.0, style: BorderStyle.solid,color: Color(0xffC4C4C4)),
+              side: BorderSide(
+                  width: 1.0,
+                  style: BorderStyle.solid,
+                  color: Color(0xffC4C4C4)),
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
           ),
@@ -346,22 +368,29 @@ class _CreateMessageState extends State<CreateMessage> {
               isExpanded: true,
               value: selectedDiv,
               items: divData
-                  .map((e) => DropdownMenuItem(child: Text(e['divName']), value: e['divId'],))
+                  .map((e) => DropdownMenuItem(
+                        child: Text(e['divName']),
+                        value: e['divId'],
+                      ))
                   .toList(),
               onChanged: (value) {
                 setState(() {
                   selectedDivId = value.toString();
                   selectedDiv = value.toString();
                 });
-              }
-          ),
+              }),
         ),
-        SizedBox(height: 20,),
+        SizedBox(
+          height: 20,
+        ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal:10),
+          padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.0, style: BorderStyle.solid,color: Color(0xffC4C4C4)),
+              side: BorderSide(
+                  width: 1.0,
+                  style: BorderStyle.solid,
+                  color: Color(0xffC4C4C4)),
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
           ),
@@ -371,17 +400,21 @@ class _CreateMessageState extends State<CreateMessage> {
               isExpanded: true,
               value: selectedCate,
               items: cateData
-                  .map((e) => DropdownMenuItem(child: Text(e['cateName']), value: e['cateId'],))
+                  .map((e) => DropdownMenuItem(
+                        child: Text(e['cateName']),
+                        value: e['cateId'],
+                      ))
                   .toList(),
               onChanged: (value) {
                 setState(() {
                   selectedCateId = value.toString();
                   selectedCate = value.toString();
                 });
-              }
-          ),
+              }),
         ),
-        SizedBox(height: 20,),
+        SizedBox(
+          height: 20,
+        ),
       ],
     );
   }

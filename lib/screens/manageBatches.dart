@@ -13,6 +13,7 @@ class ManageBatch extends StatefulWidget {
 class _ManageBatchState extends State<ManageBatch> {
   var batchData = [];
   bool isLoading = true;
+  final _formKey = GlobalKey<FormState>();
   final batchEditingController = TextEditingController();
 
   @override
@@ -94,35 +95,38 @@ class _ManageBatchState extends State<ManageBatch> {
                                       shrinkWrap: true,
                                       children: <Widget>[
                                         SizedBox(height: 20),
-                                        Center(child: Container(
-                                          width: MediaQuery.of(context).size.width/1.4,
-                                          child: TextFormField(
-                                              keyboardType: TextInputType.multiline,
-                                              autofocus: false,
-                                              controller: batchEditingController,
-                                              validator: (value) {
-                                                if (batchEditingController.text.isEmpty) {
-                                                  return "Batch Can't Be Empty";
-                                                }
-                                              },
-                                              onSaved: (value) {
-                                                batchEditingController.text = value!;
-                                              },
-                                              textInputAction: TextInputAction.done,
-                                              decoration: InputDecoration(
-                                                prefixIcon: Icon(Icons.message),
-                                                contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                                                hintText: "Enter Batch Name",
-                                                border: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                ),
-                                              )),
-                                        )),
+                                        Form(
+                                          key: _formKey,
+                                          child: Center(child: Container(
+                                            width: MediaQuery.of(context).size.width/1.4,
+                                            child: TextFormField(
+                                                keyboardType: TextInputType.multiline,
+                                                autofocus: false,
+                                                controller: batchEditingController,
+                                                validator: (value) {
+                                                  if (batchEditingController.text.isEmpty) {
+                                                    return "Batch Can't Be Empty";
+                                                  }
+                                                },
+                                                onSaved: (value) {
+                                                  batchEditingController.text = value!;
+                                                },
+                                                textInputAction: TextInputAction.done,
+                                                decoration: InputDecoration(
+                                                  prefixIcon: Icon(Icons.message),
+                                                  contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                                  hintText: "Enter Batch Name",
+                                                  border: OutlineInputBorder(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                  ),
+                                                )),
+                                          )),
+                                        ),
                                         SizedBox(height: 20),
                                         Padding(
                                           padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/8),
                                           child: ElevatedButton(onPressed: (){
-                                            if(batchEditingController.text != null ){
+                                            if(_formKey.currentState!.validate() && batchEditingController.text != null ){
                                               setState(() {
                                                 isLoading = true;
                                               });
@@ -172,6 +176,8 @@ class _ItemTileState extends State<ItemTile> {
   bool isEditable = true;
   final textEditingController = TextEditingController();
   bool isLoading = false;
+  final _formKey1 = GlobalKey<FormState>();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -189,38 +195,41 @@ class _ItemTileState extends State<ItemTile> {
           child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                        width: MediaQuery.of(context).size.width -
-                            MediaQuery.of(context).size.width / 3,
-                        child: TextFormField(
-                            keyboardType: TextInputType.multiline,
-                            autofocus: false,
-                            controller: textEditingController,
-                            validator: (value) {
-                              if (textEditingController.text.isEmpty) {
-                                return "Batch Can't Be Empty";
-                              }
-                            },
-                            onChanged: (value) {
-                             isEditable = false;
-                            },
-                            onSaved: (value) {
-                              textEditingController.text = value!;
-                            },
-                            textInputAction: TextInputAction.done,
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                              hintText: widget.tileData[widget.index]['batchName'],
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            )),
-                      ),
+                Form(
+                  key: _formKey1,
+                  child: Container(
+                          width: MediaQuery.of(context).size.width -
+                              MediaQuery.of(context).size.width / 3,
+                          child: TextFormField(
+                              keyboardType: TextInputType.multiline,
+                              autofocus: false,
+                              controller: textEditingController,
+                              validator: (value) {
+                                if (textEditingController.text.isEmpty) {
+                                  return "Batch Can't Be Empty";
+                                }
+                              },
+                              onChanged: (value) {
+                               isEditable = false;
+                              },
+                              onSaved: (value) {
+                                textEditingController.text = value!;
+                              },
+                              textInputAction: TextInputAction.done,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                hintText: widget.tileData[widget.index]['batchName'],
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              )),
+                        ),
+                ),
                 SizedBox(width: 10,),
                 GestureDetector(
                     onTap: () {
                       setState(() {
-                        if (isEditable) {
+                        if (_formKey1.currentState!.validate() && isEditable) {
                           setState(() {
                             isLoading = true;
                           });
