@@ -92,8 +92,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     return DefaultTabController(
         length: cateData.length,
-        child: new Scaffold(
-            appBar: new AppBar(
+        child: Scaffold(
+            appBar:  AppBar(
               title: const Text("Student Connect"),
               centerTitle: true,
               leading: Text(''),
@@ -219,16 +219,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                   Expanded(
                     // height:MediaQuery.of(context).size.height-(MediaQuery.of(context).size.height * 0.2),
-                    child: new TabBarView(
+                    child: TabBarView(
                       controller: _controller,
                       children: List<Widget>.generate(
                           cateData.length, (int index) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: new Column(children:[
+                          child: ListView(shrinkWrap: true,children:[
                             SizedBox(height: 20,),
                             ListView.builder(
                               shrinkWrap: true,
+                              physics: AlwaysScrollableScrollPhysics(),
                               itemCount: messages.length,
                               itemBuilder: (context, i) {
                                 return messages[i].cateId == cateData[index]['cateId'] ? Padding(
