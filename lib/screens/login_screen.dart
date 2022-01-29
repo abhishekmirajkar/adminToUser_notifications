@@ -113,9 +113,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text("Welcome to \nStudent Connect",textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 26),),
+                    Text("Welcome to \nVirtual Notice Board",textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 26),),
                     SizedBox(height: 45),
-                    Text("You are logging in as a faculty",textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 14),),
+                    Text("You are logging in as Admin",textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 14),),
                     SizedBox(height: 45),
                     emailField,
                     SizedBox(height: 25),

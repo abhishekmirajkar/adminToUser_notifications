@@ -128,7 +128,7 @@ class _ProfileState extends State<Profile> {
               Icons.arrow_back_ios,
               color: Color(0xffFB9481),
             )),
-        title: const Text("Student Connect"),
+        title: const Text("Virtual Notice Board"),
         centerTitle: true,
       ),
       body: isLoading

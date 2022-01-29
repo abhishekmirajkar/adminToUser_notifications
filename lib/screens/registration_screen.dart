@@ -250,14 +250,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "Welcome to \nStudent Connect",
+                      "Welcome to \nVirtual Notice Board",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontWeight: FontWeight.w700, fontSize: 26),
                     ),
                     SizedBox(height: 45),
                     Text(
-                      "You are Signing up as a faculty",
+                      "You are Signing up as Admin",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontWeight: FontWeight.w700, fontSize: 14),

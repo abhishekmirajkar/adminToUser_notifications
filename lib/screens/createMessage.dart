@@ -148,7 +148,7 @@ class _CreateMessageState extends State<CreateMessage> {
     return Scaffold(
       //drawer: drawer(),
       appBar: AppBar(
-        title: const Text("Student Connect"),
+        title: const Text("Virtual Notice Board"),
         leading: GestureDetector(
             child: Icon(Icons.arrow_back_ios),
             onTap: () {

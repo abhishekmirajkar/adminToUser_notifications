@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         length: cateData.length,
         child: new Scaffold(
             appBar: new AppBar(
-              title: const Text("Virtual Notice Board / VNB"),
+              title: const Text("Virtual Notice Board"),
               centerTitle: true,
               leading: Text(''),
               actions: [GestureDetector(
