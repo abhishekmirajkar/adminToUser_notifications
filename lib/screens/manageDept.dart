@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ManageDept extends StatefulWidget {
   const ManageDept({Key? key}) : super(key: key);
@@ -101,6 +102,9 @@ class _ManageDeptState extends State<ManageDept> {
                                           keyboardType: TextInputType.multiline,
                                           autofocus: false,
                                           controller: deptEditingController,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                                          ],
                                           validator: (value) {
                                             if (deptEditingController.text.isEmpty) {
                                               return "Department Can't Be Empty";
@@ -202,6 +206,9 @@ class _ItemTileState extends State<ItemTile> {
                   keyboardType: TextInputType.multiline,
                   autofocus: false,
                   controller: textEditingController,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                  ],
                   validator: (value) {
                     if (textEditingController.text.isEmpty) {
                       return "Department Can't Be Empty";

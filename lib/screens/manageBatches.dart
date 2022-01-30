@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ManageBatch extends StatefulWidget {
   const ManageBatch({Key? key}) : super(key: key);
@@ -113,6 +114,9 @@ class _ManageBatchState extends State<ManageBatch> {
                                                 keyboardType: TextInputType.multiline,
                                                 autofocus: false,
                                                 controller: batchEditingController,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter.allow(RegExp("[0-9-]")),
+                                                ],
                                                 validator: (value) {
                                                   if (batchEditingController.text.isEmpty) {
                                                     return "Batch Can't Be Empty";
@@ -137,6 +141,9 @@ class _ManageBatchState extends State<ManageBatch> {
                                           width: MediaQuery.of(context).size.width/1.4,
                                           child: TextFormField(
                                               autofocus: false,
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter.allow(RegExp("[0-9-]")),
+                                              ],
                                               validator: (value) {
                                                 if (batchCode.isEmpty) {
                                                   return "Batch Code Can't Be Empty";
@@ -238,6 +245,9 @@ class _ItemTileState extends State<ItemTile> {
                               keyboardType: TextInputType.multiline,
                               autofocus: false,
                               controller: textEditingController,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp("[0-9-]")),
+                              ],
                               validator: (value) {
                                 if (textEditingController.text.isEmpty) {
                                   return "Batch Can't Be Empty";

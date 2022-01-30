@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ManageDiv extends StatefulWidget {
   const ManageDiv({Key? key}) : super(key: key);
@@ -99,6 +100,9 @@ class _ManageDivState extends State<ManageDiv> {
                                     child: TextFormField(
                                         keyboardType: TextInputType.multiline,
                                         autofocus: false,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                                        ],
                                         controller: divEditingController,
                                         validator: (value) {
                                           if (divEditingController.text.isEmpty) {
@@ -200,6 +204,9 @@ class _ItemTileState extends State<ItemTile> {
                   keyboardType: TextInputType.multiline,
                   autofocus: false,
                   controller: textEditingController,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                  ],
                   validator: (value) {
                     if (textEditingController.text.isEmpty) {
                       return "Division Can't Be Empty";

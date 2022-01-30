@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'home_screen.dart';
@@ -76,6 +77,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         autofocus: false,
         controller: firstNameEditingController,
         keyboardType: TextInputType.name,
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+        ],
         validator: (value) {
           RegExp regex = new RegExp(r'^.{3,}$');
           if (value!.isEmpty) {
@@ -103,6 +107,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         autofocus: false,
         controller: secondNameEditingController,
         keyboardType: TextInputType.name,
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+        ],
         validator: (value) {
           if (value!.isEmpty) {
             return ("Second Name cannot be Empty");

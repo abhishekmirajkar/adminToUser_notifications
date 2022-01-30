@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ManageCategory extends StatefulWidget {
   const ManageCategory({Key? key}) : super(key: key);
@@ -101,6 +102,9 @@ class _ManageCategoryState extends State<ManageCategory> {
                                                 keyboardType: TextInputType.multiline,
                                                 autofocus: false,
                                                 controller: cateEditingController,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                                                ],
                                                 validator: (value) {
                                                   if (cateEditingController.text.isEmpty) {
                                                     return "Category Can't Be Empty";
@@ -200,6 +204,9 @@ class _ItemTileState extends State<ItemTile> {
                   keyboardType: TextInputType.multiline,
                   autofocus: false,
                   controller: textEditingController,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                  ],
                   validator: (value) {
                     if (textEditingController.text.isEmpty) {
                       return "Category Can't Be Empty";
