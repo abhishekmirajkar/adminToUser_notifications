@@ -60,143 +60,147 @@ class _ManageBatchState extends State<ManageBatch> {
           ? Center(
               child: CircularProgressIndicator.adaptive(),
             )
-          : Column(
-              children: [
-                SizedBox(height: 10,),
-                Text("Batch Details",textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 22),),
+          : SingleChildScrollView(
+            child: Column(
+                children: [
+                  SizedBox(height: 10,),
+                  Text("Batch Details",textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 22),),
 
-                SizedBox(height: 10,),
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemBuilder: (context, i) {
-                    return ItemTile(
-                      tileData: batchData,index: i,
-                      removefuntion:(){
-                        setState(() {
-                          isLoading = true;
-                          FirebaseFirestore.instance
-                              .collection('batches')
-                              .doc(batchData[i]['batchId'])
-                              .delete().then((value) => setState(() {
-                            isLoading = false;
-                            batchData.removeAt(i);
-                          }));
+                  SizedBox(height: 10,),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, i) {
+                      return ItemTile(
+                        tileData: batchData,index: i,
+                        removefuntion:(){
+                          setState(() {
+                            isLoading = true;
+                            FirebaseFirestore.instance
+                                .collection('batches')
+                                .doc(batchData[i]['batchId'])
+                                .delete().then((value) => setState(() {
+                              isLoading = false;
+                              batchData.removeAt(i);
+                            }));
 
-                        });
-                      }
-                    );
-                  },
-                  itemCount: batchData.length,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    GestureDetector(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                batchCode = getRandomString(6);
-                                return Dialog(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  elevation: 16,
-                                  child: Container(
-                                    child: ListView(
-                                      shrinkWrap: true,
-                                      children: <Widget>[
-                                        SizedBox(height: 20),
-                                        Form(
-                                          key: _formKey,
-                                          child: Center(child: Container(
+                          });
+                        }
+                      );
+                    },
+                    itemCount: batchData.length,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  batchCode = getRandomString(6);
+                                  return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10)),
+                                    elevation: 16,
+                                    child: Container(
+                                      child: ListView(
+                                        shrinkWrap: true,
+                                        children: <Widget>[
+                                          SizedBox(height: 20),
+                                          Form(
+                                            key: _formKey,
+                                            child: Center(child: Container(
+                                              width: MediaQuery.of(context).size.width/1.4,
+                                              child: TextFormField(
+                                                  keyboardType: TextInputType.multiline,
+                                                  autofocus: false,
+                                                  controller: batchEditingController,
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter.allow(RegExp("[0-9-]")),
+                                                  ],
+                                                  validator: (value) {
+                                                    if (batchEditingController.text.isEmpty) {
+                                                      return "Batch Can't Be Empty";
+                                                    }
+                                                  },
+                                                  onSaved: (value) {
+                                                    batchEditingController.text = value!;
+                                                  },
+                                                  textInputAction: TextInputAction.done,
+                                                  decoration: InputDecoration(
+                                                    prefixIcon: Icon(Icons.message),
+                                                    contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                                    hintText: "Enter Batch Name",
+                                                    border: OutlineInputBorder(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                    ),
+                                                  )),
+                                            )),
+                                          ),
+                                          SizedBox(height: 20),
+                                          Center(child: Container(
                                             width: MediaQuery.of(context).size.width/1.4,
                                             child: TextFormField(
-                                                keyboardType: TextInputType.multiline,
                                                 autofocus: false,
-                                                controller: batchEditingController,
                                                 inputFormatters: [
                                                   FilteringTextInputFormatter.allow(RegExp("[0-9-]")),
                                                 ],
                                                 validator: (value) {
-                                                  if (batchEditingController.text.isEmpty) {
-                                                    return "Batch Can't Be Empty";
+                                                  if (batchCode.isEmpty) {
+                                                    return "Batch Code Can't Be Empty";
                                                   }
                                                 },
-                                                onSaved: (value) {
-                                                  batchEditingController.text = value!;
-                                                },
+                                                enabled: false,
                                                 textInputAction: TextInputAction.done,
                                                 decoration: InputDecoration(
-                                                  prefixIcon: Icon(Icons.message),
+                                                  prefixIcon: Icon(Icons.qr_code),
                                                   contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                                                  hintText: "Enter Batch Name",
+                                                  hintText: batchCode,
                                                   border: OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(10),
                                                   ),
                                                 )),
                                           )),
-                                        ),
-                                        SizedBox(height: 20),
-                                        Center(child: Container(
-                                          width: MediaQuery.of(context).size.width/1.4,
-                                          child: TextFormField(
-                                              autofocus: false,
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter.allow(RegExp("[0-9-]")),
-                                              ],
-                                              validator: (value) {
-                                                if (batchCode.isEmpty) {
-                                                  return "Batch Code Can't Be Empty";
-                                                }
-                                              },
-                                              enabled: false,
-                                              textInputAction: TextInputAction.done,
-                                              decoration: InputDecoration(
-                                                prefixIcon: Icon(Icons.qr_code),
-                                                contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                                                hintText: batchCode,
-                                                border: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                ),
-                                              )),
-                                        )),
-                                        SizedBox(height: 20),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/8),
-                                          child: ElevatedButton(onPressed: (){
-                                            if(_formKey.currentState!.validate() && batchEditingController.text != null ){
-                                              setState(() {
-                                                isLoading = true;
-                                              });
-                                             var ref =  FirebaseFirestore.instance
-                                                  .collection('batches').doc();
-                                             print(ref.id);
-                                              ref.set({
-                                                "batchId": ref.id,
-                                                "batchName": batchEditingController.text,
-                                                "batchCode": batchCode,
-                                              }).then((value) => setState(() {
-                                                Navigator.pop(context);
-                                                batchEditingController.text = "";
-                                                fetchData();
-                                              }));
-                                            }
-                                          }, child: Text("Save")),
-                                        )
-                                      ],
+                                          SizedBox(height: 20),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/8),
+                                            child: ElevatedButton(onPressed: (){
+                                              if(_formKey.currentState!.validate() && batchEditingController.text != null ){
+                                                setState(() {
+                                                  isLoading = true;
+                                                });
+                                               var ref =  FirebaseFirestore.instance
+                                                    .collection('batches').doc();
+                                               print(ref.id);
+                                                ref.set({
+                                                  "batchId": ref.id,
+                                                  "batchName": batchEditingController.text,
+                                                  "batchCode": batchCode,
+                                                }).then((value) => setState(() {
+                                                  Navigator.pop(context);
+                                                  batchEditingController.text = "";
+                                                  fetchData();
+                                                }));
+                                              }
+                                            }, child: Text("Save")),
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(right:38.0),
-                          child: Text("Add Batch +",style: TextStyle(fontSize: 18,decoration: TextDecoration.underline,),),
-                        )),
-                  ],
-                )
-              ],
-            ),
+                                  );
+                                });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(right:38.0),
+                            child: Text("Add Batch +",style: TextStyle(fontSize: 18,decoration: TextDecoration.underline,),),
+                          )),
+                    ],
+                  ),
+                  SizedBox(height: 30,),
+                ],
+              ),
+          ),
     );
   }
 }
@@ -232,46 +236,70 @@ class _ItemTileState extends State<ItemTile> {
             child: CircularProgressIndicator.adaptive(),
           )
         : Padding(
-          padding: const EdgeInsets.symmetric(vertical:8.0),
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Form(
-                  key: _formKey1,
-                  child: Container(
-                          width: MediaQuery.of(context).size.width -
-                              MediaQuery.of(context).size.width / 3,
-                          child: TextFormField(
-                              keyboardType: TextInputType.multiline,
-                              autofocus: false,
-                              controller: textEditingController,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp("[0-9-]")),
-                              ],
-                              validator: (value) {
-                                if (textEditingController.text.isEmpty) {
-                                  return "Batch Can't Be Empty";
-                                }
-                              },
-                              onChanged: (value) {
-                               isEditable = false;
-                              },
-                              onSaved: (value) {
-                                textEditingController.text = value!;
-                              },
-                              textInputAction: TextInputAction.done,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                                hintText: widget.tileData[widget.index]['batchName'],
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+      padding: const EdgeInsets.all(8.0),
+          child: Card(
+            elevation: 5.0,
+            shape: RoundedRectangleBorder(
+              side: new BorderSide(color: Theme.of(context).primaryColor, width: 2.0),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Form(
+                          key: _formKey1,
+                          child: Container(
+                                  width: MediaQuery.of(context).size.width-100,
+                                  child: TextFormField(
+                                      keyboardType: TextInputType.multiline,
+                                      autofocus: false,
+                                      controller: textEditingController,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(RegExp("[0-9-]")),
+                                      ],
+                                      validator: (value) {
+                                        if (textEditingController.text.isEmpty) {
+                                          return "Batch Can't Be Empty";
+                                        }
+                                      },
+                                      onChanged: (value) {
+                                       isEditable = false;
+                                      },
+                                      onSaved: (value) {
+                                        textEditingController.text = value!;
+                                      },
+                                      textInputAction: TextInputAction.done,
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                        hintText: widget.tileData[widget.index]['batchName'],
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                      )),
                                 ),
-                              )),
                         ),
-                ),
-                SizedBox(width: 10,),
-                GestureDetector(
-                    onTap: () {
+                        SizedBox(width: 10,),
+                      ],
+                    ),
+                  SizedBox(width: 10,),
+                  Container(
+                    padding: EdgeInsets.only(top: 10),
+                    width: MediaQuery.of(context).size.width - 20,
+                    child: Row(
+                      children: [
+                        Text('Batch Code: ',style: TextStyle(fontWeight: FontWeight.bold),),
+                        Text('${widget.tileData[widget.index]['batchCode']}',),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10,),
+                  Row(mainAxisAlignment: MainAxisAlignment.center
+                    ,children: [
+                    RaisedButton(child:Icon(Icons.save,size: 20,color: Colors.white,),color: Colors.lightGreen,onPressed: (){
                       setState(() {
                         if (_formKey1.currentState!.validate() && isEditable) {
                           setState(() {
@@ -285,23 +313,23 @@ class _ItemTileState extends State<ItemTile> {
                             "batchName": textEditingController.text,
                             "batchCode": batchCode,
                           }).then((value) => setState(() {
-                                    isEditable = false;
-                                    isLoading = false;
-                                    widget.tileData[widget.index]['batchName'] =
-                                        textEditingController.text;
-                                  }));
+                            isEditable = false;
+                            isLoading = false;
+                            widget.tileData[widget.index]['batchName'] =
+                                textEditingController.text;
+                          }));
                         } else {
                           isEditable = !isEditable;
                         }
                       });
-                    },
-                    child:  Icon(Icons.save,color: Theme.of(context).primaryColor,size: 30)),
-                SizedBox(width: 5,),
-                GestureDetector(
-                    onTap: widget.removefuntion,
-                    child: Icon(Icons.delete,color: Colors.red,size: 30,))
-              ],
+                    },),
+                    SizedBox(width: 20,),
+                    RaisedButton(child:Icon(Icons.delete,color: Colors.white,size: 20,),color: Colors.redAccent,onPressed: widget.removefuntion,),
+                  ],)
+                ],
+              ),
             ),
+          ),
         );
   }
 }

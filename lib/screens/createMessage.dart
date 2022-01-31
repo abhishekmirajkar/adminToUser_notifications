@@ -160,48 +160,50 @@ class _CreateMessageState extends State<CreateMessage> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Text(
-                      "Create Message",
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontWeight: FontWeight.w700, fontSize: 26),
-                    ),
-                    subForm(),
-                    TextFormField(
-                        keyboardType: TextInputType.multiline,
-                        autofocus: false,
-                        maxLines: 10,
-                        controller: messageEditingController,
-                        validator: (value) {
-                          if (messageEditingController.text.isEmpty) {
-                            return "Message Can't Be Empty";
-                          }
-                        },
-                        onSaved: (value) {
-                          messageEditingController.text = value!;
-                        },
-                        textInputAction: TextInputAction.done,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                          hintText: "Enter Message",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        )),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    submitButton(),
-                  ],
+          : SingleChildScrollView(
+            child: Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Text(
+                        "Create Message",
+                        textAlign: TextAlign.center,
+                        style:
+                            TextStyle(fontWeight: FontWeight.w700, fontSize: 26),
+                      ),
+                      subForm(),
+                      TextFormField(
+                          keyboardType: TextInputType.multiline,
+                          autofocus: false,
+                          maxLines: 10,
+                          controller: messageEditingController,
+                          validator: (value) {
+                            if (messageEditingController.text.isEmpty) {
+                              return "Message Can't Be Empty";
+                            }
+                          },
+                          onSaved: (value) {
+                            messageEditingController.text = value!;
+                          },
+                          textInputAction: TextInputAction.done,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                            hintText: "Enter Message",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          )),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      submitButton(),
+                    ],
+                  ),
                 ),
               ),
-            ),
+          ),
     );
   }
 
